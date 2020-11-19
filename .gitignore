@@ -1,0 +1,6 @@
+# Ignore folders with dataset (test and train)
+/test
+/train
+/train_output
+/test_output
+/.ipynb_checkpoints
