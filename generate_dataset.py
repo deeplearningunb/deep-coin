@@ -31,7 +31,7 @@ def create_dataset(dataset_path):
     """
     
     # Coin Detector made with dlib library
-    detector = dlib.simple_object_detector("assets/hog_detector.svm")
+    detector = dlib.simple_object_detector("assets/coin_detector.svm")
     
     # Create output folder to store dataset with 64x64 coins   
     output_folder = 'generated_datasets/' + dataset_path + '_output'
