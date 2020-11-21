@@ -9,8 +9,8 @@ import numpy as np
 Script to generate the dataset with the cutted coins images
 """
 
-TRAIN_DATASET_PATH = "dataset/train"
-TEST_DATASET_PATH = "dataset/test"
+DATASETS_PATH = "datasets"
+OUTPUT_FOLDER_PATH = DATASETS_PATH + "/generated_datasets"
 
 
 def get_image_region(image, x1, y1, x2, y2):
@@ -20,35 +20,36 @@ def get_image_region(image, x1, y1, x2, y2):
 
     return image[y1:y2, x1:x2]
 
-def create_dataset(dataset_path):
+def create_dataset(input_dataset_folder):
     """
     This script detect, cut and store coins from images.
     It's necessary to especify the directory path (train or test) where all images are stored.
     The directory should contain sub-directories as follow: '5', '10', '25', '50', '100'.
 
     arg:
-    - dataset_path: path to dataset (train or test).
+    - input_dataset_folder: folder in datasets with inner folder of train (training) or test.
     """
     
     # Coin Detector made with dlib library
     detector = dlib.simple_object_detector("assets/coin_detector.svm")
     
     # Create output folder to store dataset with 64x64 coins   
-    output_folder = 'generated_datasets/' + dataset_path + '_output'
+    input_path = DATASETS_PATH + '/' + input_dataset_folder
+    output_folder = OUTPUT_FOLDER_PATH + '/' + input_dataset_folder
     if os.path.exists(f'{output_folder}'):
         shutil.rmtree(f'{output_folder}')
     else:
         os.makedirs(f'{output_folder}')
     
     # Iterate every specific type of coin folder and create new dataset
-    for coin_directory in os.listdir(f'{dataset_path}'):
+    for coin_directory in os.listdir(f'{input_path}'):
         # Create directory to specific type of coin
         os.makedirs(f'{output_folder}/{coin_directory}')
         
         coin_images = []
-        for coin_image in os.listdir(f'{dataset_path}/{coin_directory}'):
+        for coin_image in os.listdir(f'{input_path}/{coin_directory}'):
             # Read image from disk and detect coin
-            img = cv2.imread(f'{dataset_path}/{coin_directory}/{coin_image}')
+            img = cv2.imread(f'{input_path}/{coin_directory}/{coin_image}')
             gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
             blur = cv2.GaussianBlur(gray, (3,3), 2)
             coin_image = detector(blur)
@@ -70,8 +71,11 @@ def create_dataset(dataset_path):
 
 
 def main():
-    create_dataset('datasets/train')
-    create_dataset('datasets/test')
+    print("Informe a pasta onde esta localizado o dataset com as duas pastas internas (train e test)")
+    print("Obs: A pasta do dataset deve estar em /datasets (nao digite '/' no inicio ou fim do caminho)")
+    input_dataset_folder = input()
+    create_dataset(input_dataset_folder + '/train')
+    create_dataset(input_dataset_folder + '/test')
 
 if __name__ == '__main__':
     main()
